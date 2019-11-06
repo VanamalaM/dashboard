@@ -26,6 +26,7 @@ class index extends React.Component{
           loader : false
         })
     }
+
     getData(){
       var maxcount = this.state.totalCount;
       var pages = Math.round(maxcount/10)
@@ -49,7 +50,6 @@ class index extends React.Component{
       })
     }
     
-
     onChangesearchData = (e) =>{
         var searchedData = e.target.value;
         this.setState({
