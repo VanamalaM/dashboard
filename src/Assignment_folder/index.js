@@ -12,12 +12,14 @@ class index extends React.Component{
                 search : "",
                 loader : false,
                 totalCount : 80,
-                current : 0
+                current : 1
             } 
     }
 
     componentDidMount(){
+      this.intervalID = setInterval(this.refreshData, 5000);
       this.getData() 
+      // this.onChangesearchData()
     }
 
     componentWillUnmount(){
@@ -27,36 +29,44 @@ class index extends React.Component{
         })
     }
 
-    getData(){
+    refreshData=()=>{
       var maxcount = this.state.totalCount;
       var pages = Math.round(maxcount/10)
       var currentCount = this.state.current;
       currentCount = currentCount + 1 ;
-      var searchedData = this.state.search ? this.state.search : "reactjs"
       if(currentCount > pages)
       console.log("...")
       else{
-      console.log(",,,")
-      fetch('https://newsapi.org/v2/everything?q=reactjs&apiKey=363d26dd3d664d199ca63adc371e22aa&pageSize=10&page='+currentCount)
+        this.setState({
+          current : currentCount
+        },()=>this.getData())
+        
+      }
+      
+    }
+
+    getData=()=>{
+      var searchedData = this.state.search ? this.state.search : "reactjs"
+      fetch('https://newsapi.org/v2/everything?q='+searchedData+'&apiKey=99b2dc084eae4993adf955652422c714&pageSize=10&page='+this.state.current)
         .then(res => res.json())
         .then((data) => {
           this.setState({ articleData : data.articles,loader:true })
-          console.log("fghj",searchedData,data.articles)
           // call getData() again in 30 seconds
           // this.intervalID = setTimeout(this.getData.bind(this), 30000);
           // console.log(this.intervalID = setTimeout(this.getData.bind(this), 30000))
         })
         .catch(console.log("-"))  
-      }
-      this.setState({
-        current : currentCount
-      })
     }
+    
     
     onChangesearchData = (e) =>{
         var searchedData = e.target.value;
         this.setState({
           search : searchedData
+        },()=>{
+          this.getData()
+          // var searchedData = this.state.search ? this.state.search : "reactjs"
+          // fetch('https://newsapi.org/v2/everything?q='+searchedData+'&apiKey=99b2dc084eae4993adf955652422c714&pageSize=10&page=1')
         })
     }
 
@@ -67,7 +77,6 @@ class index extends React.Component{
         //     return search.source.name.toLowerCase().indexOf(this.state.search) !== -1 && filter;
         //   } 
         // )
-        console.log("log",this.state.articleData)
         return(
             <React.Fragment>
               <InfiniteScroll
@@ -81,12 +90,12 @@ class index extends React.Component{
                            <div className="searchBar-container">
                               <input className="searchinputBar-class img-class"
                                  placeholder="Search"
-                                 onKeyUp = {this.onChangesearchData} 
+                                 onChange = {this.onChangesearchData.bind(this)} 
                               />
                            </div>
                             <div className="map-container">
                             {
-                                // this.state.articleData.length !== 0 ? (
+                                this.state.articleData.length !== 0 ? (
                                   this.state.articleData && this.state.articleData.map((value,key)=>{
                                   return(
                                       <div className="card-contents" key={key}>
@@ -104,11 +113,11 @@ class index extends React.Component{
                                       </div>
                                   )
                                 }) 
-                                // ) : (
-                                //   <div style={{textAlign:"center",padding:"30px"}}>
-                                //     No result found.
-                                //   </div>
-                                // )
+                                ) : (
+                                  <div style={{textAlign:"center",padding:"30px"}}>
+                                    No result found.
+                                  </div>
+                                )
                             }
                             </div>
                         </div>
