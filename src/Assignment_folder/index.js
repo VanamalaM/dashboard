@@ -17,9 +17,8 @@ class index extends React.Component{
     }
 
     componentDidMount(){
-      this.intervalID = setInterval(this.refreshData, 5000);
+      this.intervalID = setInterval(this.refreshData, 30000);
       this.getData() 
-      // this.onChangesearchData()
     }
 
     componentWillUnmount(){
@@ -51,9 +50,6 @@ class index extends React.Component{
         .then(res => res.json())
         .then((data) => {
           this.setState({ articleData : data.articles,loader:true })
-          // call getData() again in 30 seconds
-          // this.intervalID = setTimeout(this.getData.bind(this), 30000);
-          // console.log(this.intervalID = setTimeout(this.getData.bind(this), 30000))
         })
         .catch(console.log("-"))  
     }
@@ -65,8 +61,6 @@ class index extends React.Component{
           search : searchedData
         },()=>{
           this.getData()
-          // var searchedData = this.state.search ? this.state.search : "reactjs"
-          // fetch('https://newsapi.org/v2/everything?q='+searchedData+'&apiKey=99b2dc084eae4993adf955652422c714&pageSize=10&page=1')
         })
     }
 
